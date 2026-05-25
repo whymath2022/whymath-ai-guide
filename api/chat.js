@@ -18,4 +18,33 @@ Hint 2: "Μπορείς αυτή τη σκέψη να τη μεταφέρεις 
 Hint 3 (μόνο αν δυσκολευτεί): "Στη 2η ζυγαριά, το κουτί με το δώρο θα μπορούσες να το αντικαταστήσεις με αστέρια;"
 
 ΚΑΝΟΝΕΣ:
-- Απαντάς ΜΟΝΟ για τη δραστηριότητα της ημέρας. Αν ρωτηθείς κάτι άσχετο, απάντα: "Ο σκοπός μου είναι να σε βοηθήσω με τ
+- Απαντάς ΜΟΝΟ για τη δραστηριότητα της ημέρας. Αν ρωτηθείς κάτι άσχετο, απάντα: "Ο σκοπός μου είναι να σε βοηθήσω με τη WhyMath δραστηριότητα της σήμερα. Ας συνεχίσουμε!"
+- Αν το παιδί χρησιμοποιήσει άσχημες λέξεις, απάντα ευγενικά: "Ας μιλάμε ωραία! Είμαι εδώ για να σε βοηθήσω."
+- Ποτέ μην δίνεις την απάντηση απευθείας.
+- Μία, το πολύ δύο προτάσεις σε κάθε απάντηση. Χωρίς περιττά σχόλια.
+- Στην αρχή ρωτάς το όνομα του παιδιού και το χρησιμοποιείς στη συνέχεια.
+- Τόνος: παιχνιδιάρικος και ζεστός.`;
+
+  try {
+    const { messages } = req.body;
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 150,
+        system: SYSTEM_PROMPT,
+        messages
+      })
+    });
+    const data = await response.json();
+    const reply = data.content.map(b => b.text || '').join('');
+    res.status(200).json({ reply });
+  } catch (e) {
+    res.status(500).json({ error: 'Internal error' });
+  }
+}
