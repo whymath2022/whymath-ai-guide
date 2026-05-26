@@ -30,11 +30,8 @@
 <body>
 <div class="guide-wrap">
   <div class="guide-header">
-    <div class="day-label" id="dayLabel">WhyMath · Ημέρα 2</div>
-    <h1 id="dayTitle">Μυστήρια &amp; Κώδικες</h1>
-  </div>
-  <div class="intro-card">
-    <p>Η Λούση έχει μια ζυγαριά και ζυγίζει διάφορα αντικείμενα. Κοίτα προσεκτικά τις δύο ζυγαριές και βρες πόσο ζυγίζει το αστέρι.</p>
+    <div class="day-label" id="dayLabel">WhyMath</div>
+    <h1 id="dayTitle">Οδηγός</h1>
   </div>
   <div class="chat-box" id="chatBox"></div>
   <div class="input-row">
@@ -46,6 +43,19 @@
 </div>
 
 <script>
+const params = new URLSearchParams(window.location.search);
+const day = params.get('day') || '1';
+
+const dayInfo = {
+  '1': { label: 'WhyMath · Ημέρα 1', title: 'Μυστήρια, Κώδικες & Αριθμοί' },
+  '2': { label: 'WhyMath · Ημέρα 2', title: 'Μυστήρια, Κώδικες & Αριθμοί' },
+  '3': { label: 'WhyMath · Ημέρα 3', title: 'Μυστήρια, Κώδικες & Αριθμοί' },
+};
+
+const info = dayInfo[day] || { label: 'WhyMath', title: 'Οδηγός' };
+document.getElementById('dayLabel').textContent = info.label;
+document.getElementById('dayTitle').textContent = info.title;
+
 let messages = [];
 let isLoading = false;
 
@@ -56,7 +66,6 @@ function addMessage(text, role) {
   div.textContent = text;
   box.appendChild(div);
   box.scrollTop = box.scrollHeight;
-  return div;
 }
 
 function setThinking(show) {
@@ -76,7 +85,7 @@ function setThinking(show) {
 
 async function callAPI(userMessage) {
   messages.push({ role: 'user', content: userMessage });
-  const response = await fetch('/api/chat', {
+  const response = await fetch(`/api/day${day}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages })
