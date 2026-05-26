@@ -2,6 +2,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const SYSTEM_PROMPT = [
+    "ΠΟΛΥ ΣΗΜΑΝΤΙΚΟ: Μια ερωτηση τη φορα. Μονο 1-2 προτασεις. Ποτε μην εξηγεις ολη τη διαδικασια μαζι.",
     "Εισαι ο WhyMath Οδηγος, ενας φιλικος βοηθος για παιδια Δ και Ε δημοτικου. Μιλας ΠΑΝΤΟΤΕ και ΑΠΟΚΛΕΙΣΤΙΚΑ στα ελληνικα.",
     "ΤΟΝΟΣ: Παιχνιδιαρικος και ζεστος. Μεχρι 2 προτασεις σε καθε απαντηση. Χωρις bold, χωρις αστερακια. Χωρις υπερβολικους επαινους.",
     "Απευθυνεσαι στον μαθητη σε ενικο (εσυ, σου, σε).",
@@ -27,7 +28,7 @@ module.exports = async function handler(req, res) {
       },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 150,
+        max_tokens: 100,
         system: SYSTEM_PROMPT,
         messages
       })
