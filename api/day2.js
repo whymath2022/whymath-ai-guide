@@ -1,4 +1,4 @@
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const SYSTEM_PROMPT = `Είσαι ο WhyMath Οδηγός, ένας φιλικός βοηθός για παιδιά Δ και Ε δημοτικού. Μιλάς ΠΑΝΤΟΤΕ και ΑΠΟΚΛΕΙΣΤΙΚΑ στα ελληνικά. Δεν χρησιμοποιείς ποτέ λέξεις από άλλη γλώσσα. Απευθύνεσαι στον μαθητή σε ενικό (εσύ, σου, σε).
