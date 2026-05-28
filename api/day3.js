@@ -2,40 +2,16 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const CORRECT_PATH = 'ABGHGLQPKLMNIDCDEJOTSRWX';
-  const GROUPS = ['ABGH', 'GLQP', 'KLMN', 'IDCD', 'EJOT', 'SRWX'];
 
   const { messages } = req.body;
   const lastMessage = messages[messages.length - 1].content.toUpperCase().trim();
-
-  const matchedGroup = GROUPS.find(g => lastMessage === g);
-  const isFullPath = lastMessage === CORRECT_PATH;
+  const isCorrect = lastMessage === CORRECT_PATH;
 
   let systemNote = '';
-
-  if (isFullPath) {
-    systemNote = 'Το παιδι εδωσε ολο το σωστο μονοπατι. Πες: Το βρηκες! Σε περιμενω αυριο για το επομενο μυστηριο!';
-  } else if (matchedGroup) {
-    const idx = GROUPS.indexOf(matchedGroup);
-    if (idx < GROUPS.length - 1) {
-      systemNote = `Η ομαδα ${matchedGroup} ειναι ΣΩΣΤΗ. Πες: Σωστα! Συνεχισε με τα επομενα 4.`;
-    }
-  } else if (lastMessage.length === 4) {
-    let wrongAt = '';
-    let wrongIdx = -1;
-    for (let j = 0; j < GROUPS.length; j++) {
-      if (lastMessage !== GROUPS[j]) {
-        wrongAt = GROUPS[j];
-        wrongIdx = j;
-        break;
-      }
-    }
-    const correct = GROUPS[wrongIdx] || '';
-    const wrongLetter = lastMessage.split('').find((c, k) => c !== (correct[k] || ''));
-    if (wrongAt.includes('G') || wrongAt.includes('L') || wrongAt.includes('D')) {
-      systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Πες ΑΚΡΙΒΩΣ: Σωστα τα πρωτα γραμματα αλλα το ${wrongLetter || '4ο γραμμα'} δεν ειναι σωστο. Δες το τετραγωνο G - ειναι η 1η φορα που περνας εκει;`;
-    } else {
-      systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Η σωστη ειναι ${wrongAt}. Πες στο παιδι οτι εκανε λαθος και να ξαναπροσπαθησει.`;
-    }
+  if (isCorrect) {
+    systemNote = 'Το παιδι εδωσε τη ΣΩΣΤΗ απαντηση. Πες: Το βρηκες! Σε περιμενω αυριο για το επομενο μυστηριο!';
+  } else if (lastMessage.length > 4) {
+    systemNote = `Η απαντηση ειναι ΛΑΘΟΣ. Πες: Οχι ακριβως. Η σωστη διαδρομη ειναι ABGHGLQPKLMNIDCDEJOTSRWX.`;
   }
 
   const SYSTEM_PROMPT = [
@@ -45,9 +21,8 @@ module.exports = async function handler(req, res) {
     'Αν ασχημες λεξεις: Ας μιλαμε ωραια!',
     'ΕΝΑΡΞΗ: Πρωτη απαντηση ΠΑΝΤΑ: Γεια! Πως σε λενε;',
     'Μολις παρεις ονομα, λες ΑΚΡΙΒΩΣ: Παμε να λυσουμε το μυστηριο της ημερας [ονομα]! Εχεις βρει την απαντηση;',
-    'Αν ναι: ζητας να γραψει ολα τα γραμματα.',
-    'Αν οχι: λες: Εντοξει! Γραψε μου τα πρωτα 4 γραμματα της διαδρομης σου.',
-    'Αν ρωτησει για G, L, D: λες: Ειναι η πρωτη φορα που πατας εκει η εχεις ξαναπερασει;',
+    'Αν ναι: ζητας να γραψει ολα τα γραμματα της διαδρομης.',
+    'Αν οχι ή ζητησει βοηθεια, λες ΑΚΡΙΒΩΣ: Ο σωστος δρομος ξεκιναει ABG. Ειναι η 1η φορα που περνας απο το G οποτε πας στο H. Ο δρομος συνεχιζει ως GL και επειδη ειναι η 1η φορα που πατας το L πας στο Q. Συνεχισε ετσι και πες μου την τελικη διαδρομη.',
     systemNote ? `ΟΔΗΓΙΑ: ${systemNote}` : ''
   ].filter(Boolean).join(' ');
 
