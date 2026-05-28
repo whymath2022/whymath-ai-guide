@@ -31,7 +31,9 @@ module.exports = async function handler(req, res) {
       }
     }
     if (wrongAt.includes('G') || wrongAt.includes('L') || wrongAt.includes('D')) {
-      systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Η σωστη ειναι ${wrongAt}. Ρωτα: Εισαι η πρωτη φορα που πατας στο κρισιμο τετραγωνο η εχεις ξαναπερασει;`;
+     const correct = GROUPS[i];
+const wrongLetter = lastMessage.split('').find((c, idx) => c !== correct[idx]);
+systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Τα πρωτα γραμματα πριν το λαθος ειναι σωστα, αλλα το γραμμα ${wrongLetter} δεν ειναι σωστο. Πες ΑΚΡΙΒΩΣ: Σωστα τα πρωτα γραμματα, αλλα το ${wrongLetter} δεν ειναι σωστο. Δες το τετραγωνο G - ειναι η 1η φορα που περνας εκει;`;
     } else {
       systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Η σωστη ειναι ${wrongAt}. Πες στο παιδι οτι εκανε λαθος και να ξαναπροσπαθησει.`;
     }
