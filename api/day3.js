@@ -21,14 +21,24 @@ module.exports = async function handler(req, res) {
     if (next) {
       systemNote = `Η ομαδα ${matchedGroup} ειναι ΣΩΣΤΗ. Πες: Σωστα! Συνεχισε με τα επομενα 4.`;
     }
-  } else if (lastMessage.length === 4) {
-    // Βρισκουμε ποια ομαδα ειναι λαθος
-    let wrongAt = '';
-    for (let i = 0; i < GROUPS.length; i++) {
-      if (lastMessage !== GROUPS[i]) {
-        wrongAt = GROUPS[i];
-        break;
-      }
+ } else if (lastMessage.length === 4) {
+  let wrongAt = '';
+  let wrongIdx = -1;
+  for (let j = 0; j < GROUPS.length; j++) {
+    if (lastMessage !== GROUPS[j]) {
+      wrongAt = GROUPS[j];
+      wrongIdx = j;
+      break;
+    }
+  }
+  const correct = GROUPS[wrongIdx] || '';
+  const wrongLetter = lastMessage.split('').find((c, idx) => c !== (correct[idx] || ''));
+  if (wrongAt.includes('G') || wrongAt.includes('L') || wrongAt.includes('D')) {
+    systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Πες ΑΚΡΙΒΩΣ: Σωστα τα πρωτα γραμματα αλλα το ${wrongLetter || '4ο γραμμα'} δεν ειναι σωστο. Δες το τετραγωνο G - ειναι η 1η φορα που περνας εκει;`;
+  } else {
+    systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Η σωστη ειναι ${wrongAt}. Πες στο παιδι οτι εκανε λαθος και να ξαναπροσπαθησει.`;
+  }
+}
     }
     if (wrongAt.includes('G') || wrongAt.includes('L') || wrongAt.includes('D')) {
      const correct = GROUPS[i];
