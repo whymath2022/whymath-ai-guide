@@ -7,7 +7,6 @@ module.exports = async function handler(req, res) {
   const { messages } = req.body;
   const lastMessage = messages[messages.length - 1].content.toUpperCase().trim();
 
-  // Ελεγχος αν ειναι ομαδα 4 γραμματων
   const matchedGroup = GROUPS.find(g => lastMessage === g);
   const isFullPath = lastMessage === CORRECT_PATH;
 
@@ -17,33 +16,23 @@ module.exports = async function handler(req, res) {
     systemNote = 'Το παιδι εδωσε ολο το σωστο μονοπατι. Πες: Το βρηκες! Σε περιμενω αυριο για το επομενο μυστηριο!';
   } else if (matchedGroup) {
     const idx = GROUPS.indexOf(matchedGroup);
-    const next = GROUPS[idx + 1];
-    if (next) {
+    if (idx < GROUPS.length - 1) {
       systemNote = `Η ομαδα ${matchedGroup} ειναι ΣΩΣΤΗ. Πες: Σωστα! Συνεχισε με τα επομενα 4.`;
     }
- } else if (lastMessage.length === 4) {
-  let wrongAt = '';
-  let wrongIdx = -1;
-  for (let j = 0; j < GROUPS.length; j++) {
-    if (lastMessage !== GROUPS[j]) {
-      wrongAt = GROUPS[j];
-      wrongIdx = j;
-      break;
+  } else if (lastMessage.length === 4) {
+    let wrongAt = '';
+    let wrongIdx = -1;
+    for (let j = 0; j < GROUPS.length; j++) {
+      if (lastMessage !== GROUPS[j]) {
+        wrongAt = GROUPS[j];
+        wrongIdx = j;
+        break;
+      }
     }
-  }
-  const correct = GROUPS[wrongIdx] || '';
-  const wrongLetter = lastMessage.split('').find((c, idx) => c !== (correct[idx] || ''));
-  if (wrongAt.includes('G') || wrongAt.includes('L') || wrongAt.includes('D')) {
-    systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Πες ΑΚΡΙΒΩΣ: Σωστα τα πρωτα γραμματα αλλα το ${wrongLetter || '4ο γραμμα'} δεν ειναι σωστο. Δες το τετραγωνο G - ειναι η 1η φορα που περνας εκει;`;
-  } else {
-    systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Η σωστη ειναι ${wrongAt}. Πες στο παιδι οτι εκανε λαθος και να ξαναπροσπαθησει.`;
-  }
-}
-    }
+    const correct = GROUPS[wrongIdx] || '';
+    const wrongLetter = lastMessage.split('').find((c, k) => c !== (correct[k] || ''));
     if (wrongAt.includes('G') || wrongAt.includes('L') || wrongAt.includes('D')) {
-     const correct = GROUPS[i];
-const wrongLetter = lastMessage.split('').find((c, idx) => c !== correct[idx]);
-systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Τα πρωτα γραμματα πριν το λαθος ειναι σωστα, αλλα το γραμμα ${wrongLetter} δεν ειναι σωστο. Πες ΑΚΡΙΒΩΣ: Σωστα τα πρωτα γραμματα, αλλα το ${wrongLetter} δεν ειναι σωστο. Δες το τετραγωνο G - ειναι η 1η φορα που περνας εκει;`;
+      systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Πες ΑΚΡΙΒΩΣ: Σωστα τα πρωτα γραμματα αλλα το ${wrongLetter || '4ο γραμμα'} δεν ειναι σωστο. Δες το τετραγωνο G - ειναι η 1η φορα που περνας εκει;`;
     } else {
       systemNote = `Η ομαδα ειναι ΛΑΘΟΣ. Η σωστη ειναι ${wrongAt}. Πες στο παιδι οτι εκανε λαθος και να ξαναπροσπαθησει.`;
     }
