@@ -97,7 +97,7 @@ function setThinking(show) {
 
 async function callAPI(userMessage) {
   messages.push({ role: 'user', content: userMessage });
- const response = await fetch(`/api/chat`, {
+const response = await fetch(`/api/chat`, {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages, day })
   });
