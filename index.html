@@ -97,7 +97,8 @@ function setThinking(show) {
 
 async function callAPI(userMessage) {
   messages.push({ role: 'user', content: userMessage });
-const response = await fetch(`/api/chat`, {
+  const response = await fetch(`/api/chat`, {
+    method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages, day })
   });
@@ -106,7 +107,6 @@ const response = await fetch(`/api/chat`, {
   messages.push({ role: 'assistant', content: data.reply });
   return data.reply;
 }
-
 async function sendMessage() {
   const input = document.getElementById('userInput');
   const btn = document.getElementById('sendBtn');
